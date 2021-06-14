@@ -1,5 +1,8 @@
 package com.company;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import java.net.*;
 import java.io.*;
 import java.time.*;
@@ -12,6 +15,7 @@ public class Main {
     static int thr = 0;
     static int time_thr = 0;
     static String url = "http://localhost:3000/favorites";
+    static String address = "../Script.json";
 
     public static void main(String[] args) throws IOException, InterruptedException {
         for (int i = 0; i < thr; i++){
@@ -20,17 +24,32 @@ public class Main {
             TimeUnit.SECONDS.sleep(time_thr);
         }
 
+        Gson gson = new Gson();
+        Script script = gson.fromJson(new FileReader(new File(address)), Script.class);
+
+        System.out.println(script.method);
+        System.out.println(script.input);
+        System.out.println(script.timeOut);
+        System.out.println(script.thread);
+        System.out.println(script.intervalRequest);
+        System.out.println(script.intervalOnThread);
+
+
+    }
+
+    public static void sendRequestPost(URL url) throws IOException {
         Map<String, String> myArgs = new HashMap<>();
         myArgs.put("User", "Bob");
         myArgs.put("Password", "123");
 
-        System.out.println(myArgs.toString());
+        Gson gson = new Gson();
+        String json = gson.toJson(myArgs);
+        byte[] out = json.getBytes();
 
-        byte[] out = myArgs.toString().getBytes();
-
-        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
         con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json");
         con.setDoOutput(true);
         con.connect();
 
@@ -50,10 +69,9 @@ public class Main {
 
         System.out.println(urlString.toString());
         con.disconnect();
-
     }
 
-    public static void sendRequest(URL url) throws IOException {
+    public static void sendRequestGet(URL url) throws IOException {
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
         con.setRequestMethod("GET");
@@ -89,11 +107,21 @@ public class Main {
     public static void spam() {
         try{
             for (int i = 0; i < n; i++)
-                sendRequest(new URL("http://localhost:3000/weather/city?q=Moscow"));
+                sendRequestGet(new URL("http://localhost:3000/weather/city?q=Moscow"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    class Script {
+        public String method;
+    //    public Map<String, String> myArgs = new HashMap<>();
+        public String input;
+        public String timeOut;
+        public String thread;
+        public String intervalRequest;
+        public String intervalOnThread;
     }
 
 }
