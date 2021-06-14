@@ -2,98 +2,131 @@ package com.company;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 import java.net.*;
 import java.io.*;
 import java.time.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-    static int n = 50;
-    static int thr = 0;
-    static int time_thr = 0;
-    static String url = "http://localhost:3000/favorites";
-    static String address = "../Script.json";
+    static class Setting{
+        public String method;
+        public Integer countRequest;
+        public JsonObject input;
+        public List<Integer> responseCodes;
+        public String checkOutBody;
+        public JsonObject output;
+        public Integer timeOut;
+        public Integer thread;
+        public Integer intervalRequest;
+        public Integer intervalOnThread;
+        public URL url;
+    }
+    static Setting setting;
+    static long sumDelay = 0;
+    static long maxDelay = 0;
+    static long countError = 0;
+    static double kb = 0.0d;
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        for (int i = 0; i < thr; i++){
+        String address = "../Script.json";
+
+        Gson gson = new Gson();
+        setting = gson.fromJson(new FileReader(new File(address)), Setting.class);
+        setting.countRequest = 10;
+        setting.url = new URL("http://localhost:3000/favorites");
+
+        List<MyThread> list = new ArrayList<>();
+        Instant startPoint = Instant.now();
+        for (int i = 0; i < setting.thread; i++){
             MyThread thread = new MyThread();
             thread.start();
-            TimeUnit.SECONDS.sleep(time_thr);
+            list.add(thread);
+            TimeUnit.SECONDS.sleep(setting.intervalOnThread);
         }
 
-        Gson gson = new Gson();
-        Script script = gson.fromJson(new FileReader(new File(address)), Script.class);
+        for (MyThread thread: list){
+            thread.join();
+        }
 
-        System.out.println(script.method);
-        System.out.println(script.input);
-        System.out.println(script.timeOut);
-        System.out.println(script.thread);
-        System.out.println(script.intervalRequest);
-        System.out.println(script.intervalOnThread);
+        Instant finishPoint = Instant.now();
 
+        long countReq = (long) setting.countRequest * setting.thread;
 
+        System.out.print(((double) countReq / (double) Duration.between(startPoint, finishPoint).toSeconds()) + " ");
+        System.out.print(((double) sumDelay / (double)countReq) + " ");
+        System.out.print(((double) countError / (double) countReq) * 100 + "% ");
+        System.out.print(setting.thread + " ");
+        System.out.print(maxDelay + " ");
+        System.out.println(kb / (double)countReq);
     }
 
-    public static void sendRequestPost(URL url) throws IOException {
-        Map<String, String> myArgs = new HashMap<>();
-        myArgs.put("User", "Bob");
-        myArgs.put("Password", "123");
+    public static void sendRequest() throws IOException, InterruptedException {
+        HttpURLConnection con = (HttpURLConnection) setting.url.openConnection();
 
-        Gson gson = new Gson();
-        String json = gson.toJson(myArgs);
-        byte[] out = json.getBytes();
-
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
-        con.setRequestMethod("POST");
+        con.setRequestMethod(setting.method);
         con.setRequestProperty("Content-Type", "application/json");
+        con.setConnectTimeout(setting.timeOut);
+        con.setDoInput(true);
         con.setDoOutput(true);
         con.connect();
 
-        OutputStream output = con.getOutputStream();
-        output.write(out);
-        output.close();
-
-        StringBuilder urlString = new StringBuilder();
-        if (con.getResponseCode() == HttpURLConnection.HTTP_OK){
-            BufferedReader input = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String line;
-            while((line = input.readLine()) != null) {
-                urlString.append(line);
-            }
-            input.close();
+        long sizeReq = 0;
+        if (!setting.method.equals("GET")) {
+            byte[] out = setting.input.toString().getBytes();
+            OutputStream output = con.getOutputStream();
+            output.write(out);
+            output.close();
+            sizeReq = out.length;
         }
-
-        System.out.println(urlString.toString());
-        con.disconnect();
-    }
-
-    public static void sendRequestGet(URL url) throws IOException {
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
-        con.setRequestMethod("GET");
-        con.connect();
 
         Instant firstPoint = Instant.now();
-        int Code = con.getResponseCode();
+        int code = con.getResponseCode();
         Instant secondPoint = Instant.now();
-
         long delay = Duration.between(firstPoint, secondPoint).toMillis();
 
+        String status = "OK";
         StringBuilder urlString = new StringBuilder();
-        if (Code == HttpURLConnection.HTTP_OK){
+        boolean findCode = false;
+
+        for (Integer integer: setting.responseCodes)
+            if (integer == code) {
+                findCode = true;
+                break;
+            }
+
+        if (findCode){
             BufferedReader input = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String line;
             while((line = input.readLine()) != null) {
                 urlString.append(line);
             }
+            if (setting.checkOutBody.equals("Yes")){
+                if (!urlString.toString().equals(setting.output.toString())){
+                    status = "ERROR";
+                    countError = countError + 1;
+                }
+            }
             input.close();
+        } else {
+            status = "ERROR";
+            countError = countError + 1;
+        }
+        long sizeRes = con.getContentLengthLong();
+        if (sizeRes < 0){
+            sizeRes = 0;
         }
 
-        System.out.println(delay + " " + urlString.toString());
+        System.out.println(firstPoint + " " + secondPoint + " " + delay + " " + status + " " + sizeReq + " " + sizeRes);
+        sumDelay = sumDelay + delay;
+        if (delay > maxDelay)
+            maxDelay = delay;
+        kb = kb + ((double)sizeReq + (double)sizeRes) / (double)delay * 1000.0d / 1024.0d;
         con.disconnect();
     }
 
@@ -106,22 +139,12 @@ public class Main {
 
     public static void spam() {
         try{
-            for (int i = 0; i < n; i++)
-                sendRequestGet(new URL("http://localhost:3000/weather/city?q=Moscow"));
-        } catch (IOException e) {
+            for (int i = 0; i < setting.countRequest; i++){
+                sendRequest();
+                TimeUnit.SECONDS.sleep(setting.intervalRequest);
+            }
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-
     }
-
-    class Script {
-        public String method;
-    //    public Map<String, String> myArgs = new HashMap<>();
-        public String input;
-        public String timeOut;
-        public String thread;
-        public String intervalRequest;
-        public String intervalOnThread;
-    }
-
 }
