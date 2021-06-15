@@ -26,8 +26,37 @@ public class Main {
         public Integer intervalRequest;
         public Integer intervalOnThread;
         public URL url;
+
+        public Setting(Setting set) {
+            this.method = set.method;
+            this.countRequest = set.countRequest;
+            this.input = set.input;
+            this.responseCodes = new ArrayList<>(set.responseCodes);
+            this.checkOutBody = set.checkOutBody;
+            this.output = set.output;
+            this.timeOut = set.timeOut;
+            this.thread = set.thread;
+            this.intervalRequest = set.intervalRequest;
+            this.intervalOnThread = set.intervalOnThread;
+            this.url = set.url;
+        }
     }
+    static class Response{
+        public Instant firstPoint;
+        public Instant secondPoint;
+        public long delay;
+        public String status;
+        public long sizeReq;
+        public long sizeRes;
+
+        public Response(){
+            sizeReq = 0;
+            sizeRes = 0;
+        }
+    }
+
     static Setting setting;
+
     static long sumDelay = 0;
     static long maxDelay = 0;
     static long countError = 0;
@@ -38,7 +67,6 @@ public class Main {
 
         Gson gson = new Gson();
         setting = gson.fromJson(new FileReader(new File(address)), Setting.class);
-        setting.countRequest = 10;
         setting.url = new URL("http://localhost:3000/favorites");
 
         List<MyThread> list = new ArrayList<>();
@@ -66,7 +94,8 @@ public class Main {
         System.out.println(kb / (double)countReq);
     }
 
-    public static void sendRequest() throws IOException, InterruptedException {
+    public static Response sendRequest(Setting setting) throws IOException, InterruptedException {
+        Response response = new Response();
         HttpURLConnection con = (HttpURLConnection) setting.url.openConnection();
 
         con.setRequestMethod(setting.method);
@@ -76,21 +105,20 @@ public class Main {
         con.setDoOutput(true);
         con.connect();
 
-        long sizeReq = 0;
         if (!setting.method.equals("GET")) {
             byte[] out = setting.input.toString().getBytes();
             OutputStream output = con.getOutputStream();
             output.write(out);
             output.close();
-            sizeReq = out.length;
+            response.sizeReq = out.length;
         }
 
-        Instant firstPoint = Instant.now();
+        response.firstPoint = Instant.now();
         int code = con.getResponseCode();
-        Instant secondPoint = Instant.now();
-        long delay = Duration.between(firstPoint, secondPoint).toMillis();
+        response.secondPoint = Instant.now();
+        response.delay = Duration.between(response.firstPoint, response.secondPoint).toMillis();
 
-        String status = "OK";
+        response.status = "OK";
         StringBuilder urlString = new StringBuilder();
         boolean findCode = false;
 
@@ -108,26 +136,21 @@ public class Main {
             }
             if (setting.checkOutBody.equals("Yes")){
                 if (!urlString.toString().equals(setting.output.toString())){
-                    status = "ERROR";
-                    countError = countError + 1;
+                    response.status = "ERROR";
                 }
             }
             input.close();
         } else {
-            status = "ERROR";
-            countError = countError + 1;
+            response.status = "ERROR";
         }
-        long sizeRes = con.getContentLengthLong();
-        if (sizeRes < 0){
-            sizeRes = 0;
+        response.sizeRes = con.getContentLengthLong();
+        if (response.sizeRes < 0){
+            response.sizeRes = 0;
         }
 
-        System.out.println(firstPoint + " " + secondPoint + " " + delay + " " + status + " " + sizeReq + " " + sizeRes);
-        sumDelay = sumDelay + delay;
-        if (delay > maxDelay)
-            maxDelay = delay;
-        kb = kb + ((double)sizeReq + (double)sizeRes) / (double)delay * 1000.0d / 1024.0d;
         con.disconnect();
+
+        return response;
     }
 
     static class MyThread extends Thread {
@@ -140,7 +163,18 @@ public class Main {
     public static void spam() {
         try{
             for (int i = 0; i < setting.countRequest; i++){
-                sendRequest();
+                Response response = sendRequest(setting);
+                if (response.status.equals("ERROR")){
+                    countError = countError + 1;
+                }
+                sumDelay = sumDelay + response.delay;
+                if (response.delay > maxDelay)
+                    maxDelay = response.delay;
+                kb = kb + ((double)response.sizeReq + (double)response.sizeRes) / (double)response.delay * 1000.0d / 1024.0d;
+
+                System.out.println(response.firstPoint + " " + response.secondPoint + " " + response.delay + " " +
+                                    response.status + " " + response.sizeReq + " " + response.sizeRes);
+
                 TimeUnit.SECONDS.sleep(setting.intervalRequest);
             }
         } catch (IOException | InterruptedException e) {
