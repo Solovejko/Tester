@@ -55,54 +55,59 @@ public class Main {
     }
 
     static Setting setting;
-
     static long sumDelay = 0;
     static long maxDelay = 0;
     static long countError = 0;
     static double kb = 0.0d;
-
     static Logger logger = Logger.getLogger(Main.class);
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-
-        logger.info("ERROR");
-
-        /*
-        String address = "../Script.json";
+    public static void main(String[] args){
+        logger.info("Start");
+        String address = args[1];
 
         Gson gson = new Gson();
-        setting = gson.fromJson(new FileReader(new File(address)), Setting.class);
-        setting.url = new URL("http://localhost:3000/favorites");
-
-        List<MyThread> list = new ArrayList<>();
-        Instant startPoint = Instant.now();
-        for (int i = 0; i < setting.thread; i++){
-            MyThread thread = new MyThread();
-            thread.start();
-            list.add(thread);
-            TimeUnit.SECONDS.sleep(setting.intervalOnThread);
+        try {
+            setting = gson.fromJson(new FileReader(address), Setting.class);
+            setting.url = new URL(args[0]);
+        } catch (MalformedURLException | FileNotFoundException e) {
+            logger.error(e);
         }
 
-        for (MyThread thread: list){
-            thread.join();
+        Instant startPoint = Instant.now(); // start time
+
+        try {
+            List<MyThread> list = new ArrayList<>();
+            for (int i = 0; i < setting.thread; i++){ // start threads
+                MyThread thread = new MyThread();
+                thread.start();
+                list.add(thread);
+                TimeUnit.SECONDS.sleep(setting.intervalOnThread);
+            }
+            for (MyThread thread: list){   // wait all threads
+                    thread.join();
+            }
+        } catch (InterruptedException e) {
+            logger.error(e);
         }
 
-        Instant finishPoint = Instant.now();
+
+        Instant finishPoint = Instant.now(); //finish time
 
         long countReq = (long) setting.countRequest * setting.thread;
-
         System.out.print(((double) countReq / (double) Duration.between(startPoint, finishPoint).toMillis() * 1000) + " ");
         System.out.print(((double) sumDelay / (double)countReq) + " ");
         System.out.print(((double) countError / (double) countReq) * 100 + "% ");
         System.out.print(setting.thread + " ");
         System.out.print(maxDelay + " ");
-        System.out.println(kb / (double)countReq);*/
+        System.out.println(kb / (double)countReq);
+
+        logger.info("Finish");
     }
 
-    public static Response sendRequest(Setting setting) throws IOException, InterruptedException {
+    public static Response sendRequest(Setting setting) throws IOException{
         Response response = new Response();
-        HttpURLConnection con = (HttpURLConnection) setting.url.openConnection();
-
+        HttpURLConnection con;
+        con = (HttpURLConnection) setting.url.openConnection();
         con.setRequestMethod(setting.method);
         con.setRequestProperty("Content-Type", "application/json");
         con.setConnectTimeout(setting.timeOut);
@@ -110,7 +115,7 @@ public class Main {
         con.setDoOutput(true);
         con.connect();
 
-        if (!setting.method.equals("GET")) {
+        if (!setting.method.equals("GET")) { // if we must send body
             byte[] out = setting.input.toString().getBytes();
             OutputStream output = con.getOutputStream();
             output.write(out);
@@ -166,24 +171,29 @@ public class Main {
     }
 
     public static void spam() {
-        try{
-            for (int i = 0; i < setting.countRequest; i++){
-                Response response = sendRequest(setting);
-                if (response.status.equals("ERROR")){
-                    countError = countError + 1;
-                }
-                sumDelay = sumDelay + response.delay;
-                if (response.delay > maxDelay)
-                    maxDelay = response.delay;
-                kb = kb + ((double)response.sizeReq + (double)response.sizeRes) / (double)response.delay * 1000.0d / 1024.0d;
-
-                System.out.println(response.firstPoint + " " + response.secondPoint + " " + response.delay + " " +
-                        response.status + " " + response.sizeReq + " " + response.sizeRes);
-
-                TimeUnit.SECONDS.sleep(setting.intervalRequest);
+        for (int i = 0; i < setting.countRequest; i++){
+            Response response = null;
+            try {
+                response = sendRequest(setting);
+            } catch (IOException e) {
+                logger.error(e);
             }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            if (response.status.equals("ERROR")){
+                countError = countError + 1;
+            }
+            sumDelay = sumDelay + response.delay;
+            if (response.delay > maxDelay)
+                maxDelay = response.delay;
+            kb = kb + ((double)response.sizeReq + (double)response.sizeRes) / (double)response.delay * 1000.0d / 1024.0d;
+
+            System.out.println(response.firstPoint + " " + response.secondPoint + " " + response.delay + " " +
+                    response.status + " " + response.sizeReq + " " + response.sizeRes);
+
+            try {
+                TimeUnit.SECONDS.sleep(setting.intervalRequest);
+            } catch (InterruptedException e) {
+                logger.error(e);
+            }
         }
     }
 }
