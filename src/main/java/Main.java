@@ -4,11 +4,10 @@ import com.google.gson.JsonParseException;
 
 import java.net.*;
 import java.io.*;
+import java.sql.DataTruncation;
 import java.time.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 
@@ -59,18 +58,35 @@ public class Main {
     static long maxDelay = 0;
     static long countError = 0;
     static double kb = 0.0d;
+    static long countReq = 0;
     static Logger logger = Logger.getLogger(Main.class);
+    static String address = null;
+    static String log;
 
     public static void main(String[] args){
         logger.info("Start");
-        String address = args[1];
+
+        try {
+            address = args[1];
+            log = args[2];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            logger.error(e);
+            logger.info("Finish");
+            System.exit(1);
+        }
 
         Gson gson = new Gson();
         try {
             setting = gson.fromJson(new FileReader(address), Setting.class);
             setting.url = new URL(args[0]);
-        } catch (MalformedURLException | FileNotFoundException e) {
+        } catch (MalformedURLException | FileNotFoundException | ArrayIndexOutOfBoundsException e) {
             logger.error(e);
+            logger.info("Finish");
+            System.exit(1);
+        }
+
+        if (log.equals("INFO")){
+            logger.info(address + " " + setting.url);
         }
 
         Instant startPoint = Instant.now(); // start time
@@ -93,7 +109,6 @@ public class Main {
 
         Instant finishPoint = Instant.now(); //finish time
 
-        long countReq = (long) setting.countRequest * setting.thread;
         System.out.print(((double) countReq / (double) Duration.between(startPoint, finishPoint).toMillis() * 1000) + " ");
         System.out.print(((double) sumDelay / (double)countReq) + " ");
         System.out.print(((double) countError / (double) countReq) * 100 + "% ");
@@ -105,6 +120,7 @@ public class Main {
     }
 
     public static Response sendRequest(Setting setting) throws IOException{
+        countReq = countReq + 1;
         Response response = new Response();
         HttpURLConnection con;
         con = (HttpURLConnection) setting.url.openConnection();
@@ -176,7 +192,9 @@ public class Main {
             try {
                 response = sendRequest(setting);
             } catch (IOException e) {
-                logger.error(e);
+                logger.error("Thread: " + Thread.currentThread().getName() + " " + e);
+                countError = countError + 1;
+                continue;
             }
             if (response.status.equals("ERROR")){
                 countError = countError + 1;
@@ -192,7 +210,7 @@ public class Main {
             try {
                 TimeUnit.SECONDS.sleep(setting.intervalRequest);
             } catch (InterruptedException e) {
-                logger.error(e);
+                logger.error("Thread: " + Thread.currentThread().getName() + " " + e);
             }
         }
     }
