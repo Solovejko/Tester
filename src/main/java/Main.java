@@ -1,5 +1,3 @@
-package com.company;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -12,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.apache.log4j.Logger;
 
 public class Main {
     static class Setting{
@@ -62,7 +61,13 @@ public class Main {
     static long countError = 0;
     static double kb = 0.0d;
 
+    static Logger logger = Logger.getLogger(Main.class);
+
     public static void main(String[] args) throws IOException, InterruptedException {
+
+        logger.info("ERROR");
+
+        /*
         String address = "../Script.json";
 
         Gson gson = new Gson();
@@ -91,7 +96,7 @@ public class Main {
         System.out.print(((double) countError / (double) countReq) * 100 + "% ");
         System.out.print(setting.thread + " ");
         System.out.print(maxDelay + " ");
-        System.out.println(kb / (double)countReq);
+        System.out.println(kb / (double)countReq);*/
     }
 
     public static Response sendRequest(Setting setting) throws IOException, InterruptedException {
@@ -173,7 +178,7 @@ public class Main {
                 kb = kb + ((double)response.sizeReq + (double)response.sizeRes) / (double)response.delay * 1000.0d / 1024.0d;
 
                 System.out.println(response.firstPoint + " " + response.secondPoint + " " + response.delay + " " +
-                                    response.status + " " + response.sizeReq + " " + response.sizeRes);
+                        response.status + " " + response.sizeReq + " " + response.sizeRes);
 
                 TimeUnit.SECONDS.sleep(setting.intervalRequest);
             }
