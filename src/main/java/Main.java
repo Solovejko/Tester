@@ -89,6 +89,20 @@ public class Main {
             logger.info(address + " " + setting.url);
         }
 
+        if (log.equals("DEBUG")){
+            logger.info("\n      * " + address + " " + setting.url + '\n' +
+                        "      * method: " + setting.method + '\n' +
+                        "      * countRequest: " + setting.countRequest + '\n' +
+                        "      * input: " + setting.input + '\n' +
+                        "      * responseCodes: " + setting.responseCodes + '\n' +
+                        "      * checkOutBody: " + setting.checkOutBody + '\n' +
+                        "      * output: " + setting.output + '\n' +
+                        "      * timeOut: " + setting.timeOut + '\n' +
+                        "      * thread: " + setting.thread + '\n' +
+                        "      * intervalRequest: " + setting.intervalRequest + '\n' +
+                        "      * intervalOnThread: " + setting.intervalOnThread);
+        }
+
         Instant startPoint = Instant.now(); // start time
 
         try {
@@ -120,6 +134,9 @@ public class Main {
     }
 
     public static Response sendRequest(Setting setting) throws IOException{
+        if (log.equals("DEBUG")){
+            logger.info("Thread: " + Thread.currentThread().getName() + " Starting function sendRequest()");
+        }
         countReq = countReq + 1;
         Response response = new Response();
         HttpURLConnection con;
@@ -176,6 +193,9 @@ public class Main {
 
         con.disconnect();
 
+        if (log.equals("DEBUG")){
+            logger.info("Thread: " + Thread.currentThread().getName() + " Closing function sendRequest()");
+        }
         return response;
     }
 
@@ -187,6 +207,9 @@ public class Main {
     }
 
     public static void spam() {
+        if (log.equals("DEBUG")){
+            logger.info("Thread: " + Thread.currentThread().getName() + " Starting function spam()");
+        }
         for (int i = 0; i < setting.countRequest; i++){
             Response response = null;
             try {
@@ -212,6 +235,9 @@ public class Main {
             } catch (InterruptedException e) {
                 logger.error("Thread: " + Thread.currentThread().getName() + " " + e);
             }
+        }
+        if (log.equals("DEBUG")){
+            logger.info("Thread: " + Thread.currentThread().getName() + " Closing function spam()");
         }
     }
 }
