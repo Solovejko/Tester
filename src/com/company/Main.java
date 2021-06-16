@@ -86,7 +86,7 @@ public class Main {
 
         long countReq = (long) setting.countRequest * setting.thread;
 
-        System.out.print(((double) countReq / (double) Duration.between(startPoint, finishPoint).toSeconds()) + " ");
+        System.out.print(((double) countReq / (double) Duration.between(startPoint, finishPoint).toMillis() * 1000) + " ");
         System.out.print(((double) sumDelay / (double)countReq) + " ");
         System.out.print(((double) countError / (double) countReq) * 100 + "% ");
         System.out.print(setting.thread + " ");
