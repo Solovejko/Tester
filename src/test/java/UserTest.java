@@ -700,8 +700,6 @@ public class UserTest {
         Main.main(args);
     }
 
-
-
     @Test // DELETE с интервалами
     public void mainTest4() throws IOException {
         Gson gson = new Gson();
