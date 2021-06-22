@@ -2,8 +2,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.net.*;
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import com.google.gson.JsonSyntaxException;
@@ -12,10 +15,11 @@ import org.apache.log4j.Logger;
 public class Main {
     static class Setting{
         public String method;
+        public String endPoint;
         public Integer countRequest;
         public JsonObject input;
         public List<Integer> responseCodes;
-        public String checkOutBody;
+        public boolean checkOutBody;
         public JsonObject output;
         public Integer timeOut;
         public Integer thread;
@@ -46,6 +50,7 @@ public class Main {
     static class Response{
         public Instant firstPoint;
         public Instant secondPoint;
+        public Date date1, date2;
         public long delay;
         public String status;
         public long sizeReq;
@@ -82,13 +87,13 @@ public class Main {
     }
 
     public static Setting readJson(String[] args){
-        if (args.length != 3){
+        if (args.length != 2){
             logger.error("Incorrect number of arguments");
             logger.info("Finish");
             System.exit(1);
         }
 
-        if (args[2].equals("DEBUG")) {
+        if ((System.getenv("log") != null) && System.getenv("log").equals("DEBUG")) {
             logger.info("Starting function readJson");
         }
 
@@ -97,14 +102,16 @@ public class Main {
         Gson gson = new Gson();
         try {
             setting = gson.fromJson(new FileReader(args[1]), Setting.class);
-            setting.url = new URL(args[0]);
+            setting.url = new URL(args[0] + setting.endPoint);
         } catch (MalformedURLException | FileNotFoundException | JsonSyntaxException e) {
             logger.error(e);
             logger.info("Finish");
             System.exit(1);
         }
 
-        setting.log = args[2];
+        setting.log = System.getenv("log");
+        if (setting.log == null)
+            setting.log = "INFO";
 
         if (setting.log.equals("INFO")){
             logger.info(args[1] + " " + setting.url);
@@ -134,6 +141,9 @@ public class Main {
         if (setting.log.equals("DEBUG")) {
             logger.info("Starting function startThreads");
         }
+        System.out.format("| %8s | %8s | %6s | %6s | %8s | %8s |\n", "Date req", "Date res", "Delay", "Status", "Size req", "Size res");
+        for (int i = 0; i < 63; i++) {System.out.print('-');};
+        System.out.println();
         Instant startPoint = Instant.now();
         try {
             List<MyThread> list = new ArrayList<>();
@@ -150,6 +160,8 @@ public class Main {
             logger.error(e);
         }
         Instant finishPoint = Instant.now();
+        for (int i = 0; i < 63; i++) {System.out.print('-');};
+        System.out.println();
 
         statistics.requestsPerSeconds = (double) statistics.countReq / (double) Duration.between(startPoint, finishPoint).toMillis() * 1000;
         statistics.averageDelay = (double) statistics.sumDelay / (double) statistics.countReq;
@@ -184,8 +196,11 @@ public class Main {
         }
 
         response.firstPoint = Instant.now();
+        response.date1 = new Date();
         int code = con.getResponseCode();
         response.secondPoint = Instant.now();
+        response.date2 = new Date();
+
         response.delay = Duration.between(response.firstPoint, response.secondPoint).toMillis();
 
         response.status = "OK";
@@ -204,7 +219,7 @@ public class Main {
             while((line = input.readLine()) != null) {
                 urlString.append(line);
             }
-            if (setting.checkOutBody.equals("Yes")){
+            if (setting.checkOutBody){
                 if (!urlString.toString().equals(setting.output.toString())){
                     response.status = "ERROR";
                 }
@@ -260,9 +275,11 @@ public class Main {
             if (response.delay > statistics.maxDelay)
                 statistics.maxDelay = response.delay;
             statistics.kb += ((double)response.sizeReq + (double)response.sizeRes) / (double)response.delay * 1000.0d / 1024.0d;
+            DateFormat fr = new SimpleDateFormat("kk:mm:ss");
 
-            System.out.println(response.firstPoint + " " + response.secondPoint + " " + response.delay + " " +
-                    response.status + " " + response.sizeReq + " " + response.sizeRes);
+            System.out.format("| %8s | %8s | %6s | %6s | %8s | %8s |\n", fr.format(response.date1), fr.format(response.date2), response.delay,
+                            response.status, response.sizeReq, response.sizeRes);
+
             try {
                 TimeUnit.SECONDS.sleep(setting.intervalRequest);
             } catch (InterruptedException e) {

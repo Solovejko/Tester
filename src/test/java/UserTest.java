@@ -18,6 +18,7 @@ public class UserTest {
         String testString = """
                 {
                   "method": "POST",
+                  "endPoint": "/favorites",
                   "countRequest": 10,
                   "input": {
                     "User": "Bob",
@@ -31,7 +32,7 @@ public class UserTest {
                     150,
                     200
                   ],
-                  "checkOutBody": "Yes",
+                  "checkOutBody": false,
                   "output": {
                     "User": "Bob",
                     "Password": "123456",
@@ -80,7 +81,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(150);
         setting.responseCodes.add(200);
@@ -98,7 +99,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(Integer.MAX_VALUE);
         setting.timeOut = 0;
@@ -115,7 +116,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(Integer.MIN_VALUE);
         setting.timeOut = 0;
@@ -132,7 +133,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.responseCodes = new ArrayList<Integer>();
         setting.timeOut = 0;
         setting.url = new URL(url);
@@ -148,7 +149,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
-        setting.checkOutBody = "Yes";
+        setting.checkOutBody = true;
         setting.output = new JsonObject();
         setting.output.addProperty("Status", "OK");
         setting.responseCodes = new ArrayList<Integer>();
@@ -167,7 +168,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
-        setting.checkOutBody = "Yes";
+        setting.checkOutBody = true;
         setting.output = new JsonObject();
         setting.output.addProperty("Status", "qweqeqwe");
         setting.responseCodes = new ArrayList<Integer>();
@@ -186,7 +187,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "POST";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.input = new JsonObject();
         setting.input.addProperty("Name", "Bob");
         setting.input.addProperty("Password", "123");
@@ -206,7 +207,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "POST";
         setting.log = "INFO";
-        setting.checkOutBody = "Yes";
+        setting.checkOutBody = true;
         setting.input = new JsonObject();
         setting.input.addProperty("Name", "Bob");
         setting.input.addProperty("Password", "123");
@@ -229,7 +230,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "POST";
         setting.log = "INFO";
-        setting.checkOutBody = "Yes";
+        setting.checkOutBody = true;
         setting.input = new JsonObject();
         setting.input.addProperty("Name", "Bob");
         setting.input.addProperty("Password", "123");
@@ -252,7 +253,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "POST";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.input = new JsonObject();
         setting.input.addProperty("Name", "Bob");
         setting.input.addProperty("Password", "123");
@@ -272,7 +273,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "DELETE";
         setting.log = "INFO";
-        setting.checkOutBody = "Yes";
+        setting.checkOutBody = true;
         setting.input = new JsonObject();
         setting.input.addProperty("Name", "Bob");
         setting.input.addProperty("Password", "123");
@@ -295,7 +296,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "DELETE";
         setting.log = "INFO";
-        setting.checkOutBody = "Yes";
+        setting.checkOutBody = true;
         setting.input = new JsonObject();
         setting.input.addProperty("Name", "Bob");
         setting.input.addProperty("Password", "123");
@@ -318,7 +319,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "PUT";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.input = new JsonObject();
         setting.input.addProperty("Name", "Bob");
         setting.input.addProperty("Password", "123");
@@ -338,7 +339,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "PUT";
         setting.log = "INFO";
-        setting.checkOutBody = "Yes";
+        setting.checkOutBody = true;
         setting.input = new JsonObject();
         setting.input.addProperty("Name", "Bob");
         setting.input.addProperty("Password", "123");
@@ -361,7 +362,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "PUT";
         setting.log = "INFO";
-        setting.checkOutBody = "Yes";
+        setting.checkOutBody = true;
         setting.input = new JsonObject();
         setting.input.addProperty("Name", "Bob");
         setting.input.addProperty("Password", "123");
@@ -383,7 +384,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = true;
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(200);
         setting.timeOut = 0;
@@ -402,7 +403,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = true;
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(200);
         setting.timeOut = 0;
@@ -421,38 +422,18 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(200);
         setting.timeOut = 0;
         setting.url = new URL(url);
         setting.intervalRequest = 0;
-        setting.countRequest = -1;
+        setting.countRequest = 1;
 
         Main.spam(setting, statistics);
 
         Assert.assertEquals(1, statistics.countReq);
     }
-
-    /* // Очень долго
-    @Test // countRequest Integer.MAX_VALUE
-    public void spamTest4() throws IOException {
-        Main.Setting setting = new Main.Setting();
-        Main.Statistics statistics = new Main.Statistics();
-        setting.method = "GET";
-        setting.log = "INFO";
-        setting.checkOutBody = "No";
-        setting.responseCodes = new ArrayList<Integer>();
-        setting.responseCodes.add(200);
-        setting.timeOut = 0;
-        setting.url = new URL(url);
-        setting.intervalRequest = 0;
-        setting.countRequest = Integer.MAX_VALUE;
-
-        Main.spam(setting, statistics);
-
-        Assert.assertEquals(Integer.MAX_VALUE, statistics.countReq);
-    } */
 
     @Test // countRequest Integer.MIN_VALUE
     public void spamTest5() throws IOException {
@@ -460,7 +441,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(200);
         setting.timeOut = 0;
@@ -479,7 +460,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(200);
         setting.timeOut = 0;
@@ -498,7 +479,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(200);
         setting.timeOut = 0;
@@ -519,7 +500,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(200);
         setting.timeOut = 0;
@@ -540,7 +521,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(200);
         setting.timeOut = 0;
@@ -561,7 +542,7 @@ public class UserTest {
         Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(200);
         setting.timeOut = 0;
@@ -576,28 +557,6 @@ public class UserTest {
         Assert.assertEquals(0, statistics.threads);
     }
 
-    /* // Очень долго
-    @Test // thread Integer.MAX_VALUE
-    public void startThreads5() throws IOException {
-        Main.Setting setting = new Main.Setting();
-        Main.Statistics statistics = new Main.Statistics();
-        setting.method = "GET";
-        setting.log = "INFO";
-        setting.checkOutBody = "No";
-        setting.responseCodes = new ArrayList<Integer>();
-        setting.responseCodes.add(200);
-        setting.timeOut = 0;
-        setting.url = new URL(url);
-        setting.intervalRequest = 0;
-        setting.intervalOnThread = 0;
-        setting.countRequest = 1;
-        setting.thread = Integer.MAX_VALUE;
-
-        Main.startThreads(setting, statistics);
-
-        Assert.assertEquals(Integer.MAX_VALUE, statistics.threads);
-    }*/
-
     @Test // стандартный
     public void mainTest1() throws IOException {
         Gson gson = new Gson();
@@ -606,7 +565,7 @@ public class UserTest {
         setting.countRequest = 10;
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(200);
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.timeOut = 0;
         setting.thread = 5;
         setting.intervalRequest = 0;
@@ -645,7 +604,7 @@ public class UserTest {
         setting.input.add("USER", user);
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(200);
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.timeOut = 0;
         setting.thread = 100;
         setting.intervalRequest = 0;
@@ -684,7 +643,8 @@ public class UserTest {
         setting.input.add("USER", user);
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(200);
-        setting.checkOutBody = "Yes";
+        setting.responseCodes.add(200);
+        setting.checkOutBody = true;
         setting.output = new JsonObject();
         setting.output.addProperty("ID", 132);
         setting.output.add("USER", user);
@@ -726,7 +686,7 @@ public class UserTest {
         setting.input.add("USER", user);
         setting.responseCodes = new ArrayList<Integer>();
         setting.responseCodes.add(200);
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.timeOut = 0;
         setting.thread = 10;
         setting.intervalRequest = 2;
@@ -764,7 +724,7 @@ public class UserTest {
         user.addProperty("Number", 89123129);
         setting.input.add("USER", user);
         setting.responseCodes = new ArrayList<Integer>();
-        setting.checkOutBody = "No";
+        setting.checkOutBody = false;
         setting.timeOut = 0;
         setting.thread = 5;
         setting.intervalRequest = 0;
