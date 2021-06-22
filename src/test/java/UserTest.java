@@ -80,6 +80,7 @@ public class UserTest {
     @Test // GET стандартный
     public void sendRequestTest0() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -89,7 +90,7 @@ public class UserTest {
         setting.timeOut = 0;
         setting.url = new URL(url);
 
-        Main.Response response = Main.sendRequest(setting);
+        Main.Response response = Main.sendRequest(setting, statistics);
 
         Assert.assertEquals("OK", response.status);
     }
@@ -97,6 +98,7 @@ public class UserTest {
     @Test // GET код ответа Integer.MAX_VALUE
     public void sendRequestTest1_1() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -105,7 +107,7 @@ public class UserTest {
         setting.timeOut = 0;
         setting.url = new URL(url);
 
-        Main.Response response = Main.sendRequest(setting);
+        Main.Response response = Main.sendRequest(setting, statistics);
 
         Assert.assertEquals("ERROR", response.status);
     }
@@ -113,6 +115,7 @@ public class UserTest {
     @Test // GET код ответа Integer.MIN_VALUE
     public void sendRequestTest1_2() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -121,7 +124,7 @@ public class UserTest {
         setting.timeOut = 0;
         setting.url = new URL(url);
 
-        Main.Response response = Main.sendRequest(setting);
+        Main.Response response = Main.sendRequest(setting, statistics);
 
         Assert.assertEquals("ERROR", response.status);
     }
@@ -129,6 +132,7 @@ public class UserTest {
     @Test // GET не указываем коды ответа
     public void sendRequestTest2() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -136,7 +140,7 @@ public class UserTest {
         setting.timeOut = 0;
         setting.url = new URL(url);
 
-        Main.Response response = Main.sendRequest(setting);
+        Main.Response response = Main.sendRequest(setting, statistics);
 
         Assert.assertEquals("ERROR", response.status);
     }
@@ -144,6 +148,7 @@ public class UserTest {
     @Test // GET проверяем тело ответа верное
     public void sendRequestTest3() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "Yes";
@@ -154,7 +159,7 @@ public class UserTest {
         setting.timeOut = 0;
         setting.url = new URL(url);
 
-        Main.Response response = Main.sendRequest(setting);
+        Main.Response response = Main.sendRequest(setting, statistics);
 
         Assert.assertEquals("OK", response.status);
     }
@@ -162,6 +167,7 @@ public class UserTest {
     @Test // GET проверяем тело ответа неверное
     public void sendRequestTest4() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "Yes";
@@ -172,7 +178,7 @@ public class UserTest {
         setting.timeOut = 0;
         setting.url = new URL(url);
 
-        Main.Response response = Main.sendRequest(setting);
+        Main.Response response = Main.sendRequest(setting, statistics);
 
         Assert.assertEquals("ERROR", response.status);
     }
@@ -180,6 +186,7 @@ public class UserTest {
     @Test // POST запрос стандартный
     public void sendRequestTest5() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "POST";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -191,7 +198,7 @@ public class UserTest {
         setting.timeOut = 0;
         setting.url = new URL(url);
 
-        Main.Response response = Main.sendRequest(setting);
+        Main.Response response = Main.sendRequest(setting, statistics);
 
         Assert.assertEquals("OK", response.status);
     }
@@ -199,6 +206,7 @@ public class UserTest {
     @Test // POST запрос проверяем тело ответа верное
     public void sendRequestTest6() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "POST";
         setting.log = "INFO";
         setting.checkOutBody = "Yes";
@@ -213,7 +221,7 @@ public class UserTest {
         setting.timeOut = 0;
         setting.url = new URL(url);
 
-        Main.Response response = Main.sendRequest(setting);
+        Main.Response response = Main.sendRequest(setting, statistics);
 
         Assert.assertEquals("OK", response.status);
     }
@@ -221,6 +229,7 @@ public class UserTest {
     @Test // POST запрос проверяем тело ответа неверное
     public void sendRequestTest7() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "POST";
         setting.log = "INFO";
         setting.checkOutBody = "Yes";
@@ -235,7 +244,7 @@ public class UserTest {
         setting.timeOut = 0;
         setting.url = new URL(url);
 
-        Main.Response response = Main.sendRequest(setting);
+        Main.Response response = Main.sendRequest(setting, statistics);
 
         Assert.assertEquals("ERROR", response.status);
     }
@@ -243,6 +252,7 @@ public class UserTest {
     @Test // DELETE запрос стандартный
     public void sendRequestTest8() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "POST";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -254,7 +264,7 @@ public class UserTest {
         setting.timeOut = 0;
         setting.url = new URL(url);
 
-        Main.Response response = Main.sendRequest(setting);
+        Main.Response response = Main.sendRequest(setting, statistics);
 
         Assert.assertEquals("OK", response.status);
     }
@@ -262,6 +272,7 @@ public class UserTest {
     @Test // DELETE запрос проверяем тело ответа верное
     public void sendRequestTest9() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "DELETE";
         setting.log = "INFO";
         setting.checkOutBody = "Yes";
@@ -276,7 +287,7 @@ public class UserTest {
         setting.timeOut = 0;
         setting.url = new URL(url);
 
-        Main.Response response = Main.sendRequest(setting);
+        Main.Response response = Main.sendRequest(setting, statistics);
 
         Assert.assertEquals("OK", response.status);
     }
@@ -284,6 +295,7 @@ public class UserTest {
     @Test // DELETE запрос проверяем тело ответа неверное
     public void sendRequestTest10() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "DELETE";
         setting.log = "INFO";
         setting.checkOutBody = "Yes";
@@ -298,7 +310,7 @@ public class UserTest {
         setting.timeOut = 0;
         setting.url = new URL(url);
 
-        Main.Response response = Main.sendRequest(setting);
+        Main.Response response = Main.sendRequest(setting, statistics);
 
         Assert.assertEquals("ERROR", response.status);
     }
@@ -306,6 +318,7 @@ public class UserTest {
     @Test // PUT запрос стандартный
     public void sendRequestTest11() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "PUT";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -317,7 +330,7 @@ public class UserTest {
         setting.timeOut = 0;
         setting.url = new URL(url);
 
-        Main.Response response = Main.sendRequest(setting);
+        Main.Response response = Main.sendRequest(setting, statistics);
 
         Assert.assertEquals("OK", response.status);
     }
@@ -325,6 +338,7 @@ public class UserTest {
     @Test // PUT запрос проверяем тело ответа верное
     public void sendRequestTest12() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "PUT";
         setting.log = "INFO";
         setting.checkOutBody = "Yes";
@@ -339,7 +353,7 @@ public class UserTest {
         setting.timeOut = 0;
         setting.url = new URL(url);
 
-        Main.Response response = Main.sendRequest(setting);
+        Main.Response response = Main.sendRequest(setting, statistics);
 
         Assert.assertEquals("OK", response.status);
     }
@@ -347,6 +361,7 @@ public class UserTest {
     @Test // PUT запрос проверяем тело ответа неверное
     public void sendRequestTest13() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "PUT";
         setting.log = "INFO";
         setting.checkOutBody = "Yes";
@@ -361,13 +376,14 @@ public class UserTest {
         setting.timeOut = 0;
         setting.url = new URL(url);
 
-        Main.Response response = Main.sendRequest(setting);
+        Main.Response response = Main.sendRequest(setting, statistics);
         Assert.assertEquals("ERROR", response.status);
     }
 
     @Test // countRequest -1
     public void spamTest1() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -378,15 +394,15 @@ public class UserTest {
         setting.intervalRequest = 0;
         setting.countRequest = -1;
 
-        Main.statistics.countReq = 0;
-        Main.spam(setting);
+        Main.spam(setting, statistics);
 
-        Assert.assertEquals(0, Main.statistics.countReq);
+        Assert.assertEquals(0, statistics.countReq);
     }
 
     @Test // countRequest 0
     public void spamTest2() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -397,15 +413,15 @@ public class UserTest {
         setting.intervalRequest = 0;
         setting.countRequest = 0;
 
-        Main.statistics.countReq = 0;
-        Main.spam(setting);
+        Main.spam(setting, statistics);
 
-        Assert.assertEquals(0, Main.statistics.countReq);
+        Assert.assertEquals(0, statistics.countReq);
     }
 
     @Test // countRequest 1
     public void spamTest3() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -416,16 +432,16 @@ public class UserTest {
         setting.intervalRequest = 0;
         setting.countRequest = -1;
 
-        Main.statistics.countReq = 1;
-        Main.spam(setting);
+        Main.spam(setting, statistics);
 
-        Assert.assertEquals(1, Main.statistics.countReq);
+        Assert.assertEquals(1, statistics.countReq);
     }
 
     /* // Очень долго
     @Test // countRequest Integer.MAX_VALUE
     public void spamTest4() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -436,15 +452,15 @@ public class UserTest {
         setting.intervalRequest = 0;
         setting.countRequest = Integer.MAX_VALUE;
 
-        Main.statistics.countReq = 0;
-        Main.spam(setting);
+        Main.spam(setting, statistics);
 
-        Assert.assertEquals(Integer.MAX_VALUE, Main.statistics.countReq);
+        Assert.assertEquals(Integer.MAX_VALUE, statistics.countReq);
     } */
 
     @Test // countRequest Integer.MIN_VALUE
     public void spamTest5() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -455,15 +471,15 @@ public class UserTest {
         setting.intervalRequest = 0;
         setting.countRequest = Integer.MIN_VALUE;
 
-        Main.statistics.countReq = 0;
-        Main.spam(setting);
+        Main.spam(setting, statistics);
 
-        Assert.assertEquals(0, Main.statistics.countReq);
+        Assert.assertEquals(0, statistics.countReq);
     }
 
     @Test // intervalRequest -1
     public void spamTest6() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -474,15 +490,15 @@ public class UserTest {
         setting.intervalRequest = -1;
         setting.countRequest = Integer.MIN_VALUE;
 
-        Main.statistics.countReq = 0;
-        Main.spam(setting);
+        Main.spam(setting, statistics);
 
-        Assert.assertEquals(0, Main.statistics.countReq);
+        Assert.assertEquals(0, statistics.countReq);
     }
 
     @Test // thread -1
     public void startThreads1() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -495,15 +511,15 @@ public class UserTest {
         setting.countRequest = 1;
         setting.thread = -1;
 
-        Main.statistics.threads = 0;
-        Main.startThreads(setting);
+        Main.startThreads(setting, statistics);
 
-        Assert.assertEquals(0, Main.statistics.threads);
+        Assert.assertEquals(0, statistics.threads);
     }
 
     @Test // thread 0
     public void startThreads2() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -516,15 +532,15 @@ public class UserTest {
         setting.countRequest = 1;
         setting.thread = 0;
 
-        Main.statistics.threads = 0;
-        Main.startThreads(setting);
+        Main.startThreads(setting, statistics);
 
-        Assert.assertEquals(0, Main.statistics.threads);
+        Assert.assertEquals(0, statistics.threads);
     }
 
     @Test // thread 1
     public void startThreads3() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -537,15 +553,15 @@ public class UserTest {
         setting.countRequest = 1;
         setting.thread = 1;
 
-        Main.statistics.threads = 0;
-        Main.startThreads(setting);
+        Main.startThreads(setting, statistics);
 
-        Assert.assertEquals(1, Main.statistics.threads);
+        Assert.assertEquals(1, statistics.threads);
     }
 
     @Test // thread Integer.MIN_VALUE
     public void startThreads4() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -558,16 +574,16 @@ public class UserTest {
         setting.countRequest = 1;
         setting.thread = Integer.MIN_VALUE;
 
-        Main.statistics.threads = 0;
-        Main.startThreads(setting);
+        Main.startThreads(setting, statistics);
 
-        Assert.assertEquals(0, Main.statistics.threads);
+        Assert.assertEquals(0, statistics.threads);
     }
 
     /* // Очень долго
     @Test // thread Integer.MAX_VALUE
     public void startThreads5() throws IOException {
         Main.Setting setting = new Main.Setting();
+        Main.Statistics statistics = new Main.Statistics();
         setting.method = "GET";
         setting.log = "INFO";
         setting.checkOutBody = "No";
@@ -580,10 +596,9 @@ public class UserTest {
         setting.countRequest = 1;
         setting.thread = Integer.MAX_VALUE;
 
-        Main.statistics.threads = 0;
-        Main.startThreads(setting);
+        Main.startThreads(setting, statistics);
 
-        Assert.assertEquals(Integer.MAX_VALUE, Main.statistics.threads);
+        Assert.assertEquals(Integer.MAX_VALUE, statistics.threads);
     }*/
 
     @Test // стандартный

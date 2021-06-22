@@ -71,14 +71,14 @@ public class Main {
         public double capacity;
     }
 
-    static Statistics statistics = new Statistics();
     static Logger logger = Logger.getLogger(Main.class);
 
     public static void main(String[] args){
         logger.info("Start");
         Setting setting = new Setting(readJson(args));
-        startThreads(setting);
-        printStatistics();
+        Statistics statistics = new Statistics();
+        startThreads(setting, statistics);
+        printStatistics(statistics);
         logger.info("Finish");
     }
 
@@ -131,7 +131,7 @@ public class Main {
         return setting;
     }
 
-    public static void startThreads(Setting setting){
+    public static void startThreads(Setting setting, Statistics statistics){
         if (setting.log.equals("DEBUG")) {
             logger.info("Starting function startThreads");
         }
@@ -139,7 +139,7 @@ public class Main {
         try {
             List<MyThread> list = new ArrayList<>();
             for (int i = 0; i < setting.thread; i++){
-                MyThread thread = new MyThread(setting);
+                MyThread thread = new MyThread(setting, statistics);
                 thread.start();
                 list.add(thread);
                 TimeUnit.SECONDS.sleep(setting.intervalOnThread);
@@ -161,7 +161,7 @@ public class Main {
         }
     }
 
-    public static Response sendRequest(Setting setting) throws IOException{
+    public static Response sendRequest(Setting setting, Statistics statistics) throws IOException{
         if (setting.log.equals("DEBUG")){
             logger.info("Thread: " + Thread.currentThread().getName() + " Starting function sendRequest()");
         }
@@ -229,24 +229,26 @@ public class Main {
 
     static class MyThread extends Thread {
         Setting setting;
-        MyThread(Setting setting){
+        Statistics statistics;
+        MyThread(Setting setting, Statistics statistics){
             this.setting = new Setting(setting);
+            this.statistics = statistics;
         }
         @Override
         public void run(){
             statistics.threads++;
-            spam(setting);
+            spam(setting, statistics);
         }
     }
 
-    public static void spam(Setting setting) {
+    public static void spam(Setting setting, Statistics statistics) {
         if (setting.log.equals("DEBUG")){
             logger.info("Thread: " + Thread.currentThread().getName() + " Starting function spam()");
         }
         for (int i = 0; i < setting.countRequest; i++){
             Response response = null;
             try {
-                response = sendRequest(setting);
+                response = sendRequest(setting, statistics);
             } catch (IOException e) {
                 logger.error("Thread: " + Thread.currentThread().getName() + " " + e);
                 statistics.countError++;
@@ -273,7 +275,7 @@ public class Main {
         }
     }
 
-    public static void printStatistics(){
+    public static void printStatistics(Statistics statistics){
         System.out.println("RequestsPerSeconds: " + statistics.requestsPerSeconds);
         System.out.println("AverageDelay: " + statistics.averageDelay + " millis");
         System.out.println("Errors: " + statistics.errors + "%");
