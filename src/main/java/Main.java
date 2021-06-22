@@ -6,7 +6,6 @@ import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import com.google.gson.JsonSyntaxException;
 import org.apache.log4j.Logger;
 
@@ -246,7 +245,7 @@ public class Main {
             logger.info("Thread: " + Thread.currentThread().getName() + " Starting function spam()");
         }
         for (int i = 0; i < setting.countRequest; i++){
-            Response response = null;
+            Response response;
             try {
                 response = sendRequest(setting, statistics);
             } catch (IOException e) {

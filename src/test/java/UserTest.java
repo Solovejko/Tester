@@ -6,12 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-
-import com.google.gson.Gson;
-import com.google.gson.*;
 
 public class UserTest {
     String url = "http://localhost:3000/favorites";
@@ -19,37 +15,38 @@ public class UserTest {
     @Test // тест на парсинг json файла
     public void readJsonTest(){
         Gson gson = new Gson();
-        String testString = "{\n" +
-                "  \"method\": \"POST\",\n" +
-                "  \"countRequest\": 10,\n" +
-                "  \"input\": {\n" +
-                "    \"User\": \"Bob\",\n" +
-                "    \"Password\": \"123456\",\n" +
-                "    \"Numbers\": [\n" +
-                "      \"8928329319231\",\n" +
-                "      \"8927752421423\"\n" +
-                "    ]\n" +
-                "  },\n" +
-                "  \"responseCodes\": [\n" +
-                "    150,\n" +
-                "    200\n" +
-                "  ],\n" +
-                "  \"checkOutBody\": \"Yes\",\n" +
-                "  \"output\": {\n" +
-                "    \"User\": \"Bob\",\n" +
-                "    \"Password\": \"123456\",\n" +
-                "    \"Numbers\": [\n" +
-                "      \"8928329319231\",\n" +
-                "      \"8927752421423\"\n" +
-                "    ]\n" +
-                "  },\n" +
-                "  \"timeOut\": 10000,\n" +
-                "  \"thread\": 5,\n" +
-                "  \"intervalRequest\": 0,\n" +
-                "  \"intervalOnThread\": 0,\n" +
-                "  \"url\": \"http://localhost:3000/favorites\",\n" +
-                "  \"log\": \"DEBUG\"\n" +
-                "}";
+        String testString = """
+                {
+                  "method": "POST",
+                  "countRequest": 10,
+                  "input": {
+                    "User": "Bob",
+                    "Password": "123456",
+                    "Numbers": [
+                      "8928329319231",
+                      "8927752421423"
+                    ]
+                  },
+                  "responseCodes": [
+                    150,
+                    200
+                  ],
+                  "checkOutBody": "Yes",
+                  "output": {
+                    "User": "Bob",
+                    "Password": "123456",
+                    "Numbers": [
+                      "8928329319231",
+                      "8927752421423"
+                    ]
+                  },
+                  "timeOut": 10000,
+                  "thread": 5,
+                  "intervalRequest": 0,
+                  "intervalOnThread": 0,
+                  "url": "http://localhost:3000/favorites",
+                  "log": "DEBUG"
+                }""";
 
         File file = new File("test.json");
         PrintWriter pw = null;
